@@ -4,6 +4,7 @@ services:
   netbox:
     ports:
       - "${NETBOX_PORT_MAPPING}"  # Example: "8000:8080"
+      - "8001:8081"
     environment:
       - ALLOWED_HOSTS=${ALLOWED_HOSTS}
       - CSRF_TRUSTED_ORIGINS=${CSRF_TRUSTED_ORIGINS}
