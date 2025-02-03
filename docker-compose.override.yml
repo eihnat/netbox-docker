@@ -1,0 +1,44 @@
+version: '3.4'
+
+services:
+  netbox:
+    ports:
+      - "${NETBOX_PORT_MAPPING}"  # Example: "8000:8080"
+      - "8001:8081"
+    healthcheck:
+      # Time for which the health check can fail after the container is started.
+      # This depends mostly on the performance of your database. On the first start,
+      # when all tables need to be created the start_period should be higher than on
+      # subsequent starts. For the first start after major version upgrades of NetBox
+      # the start_period might also need to be set higher.
+      # Default value in our docker-compose.yml is 60s
+      start_period: 180s
+    environment:
+      - ALLOWED_HOSTS=${ALLOWED_HOSTS}
+      - CSRF_TRUSTED_ORIGINS=${CSRF_TRUSTED_ORIGINS}
+      - SKIP_SUPERUSER=${SKIP_SUPERUSER}
+      - SUPERUSER_NAME=${SUPERUSER_NAME}
+      - SUPERUSER_EMAIL=${SUPERUSER_EMAIL}
+      - SUPERUSER_PASSWORD=${SUPERUSER_PASSWORD}
+    volumes:
+      - ${NETBOX_CONFIG_PATH}:/etc/netbox/config:z,ro
+      - ${NETBOX_MEDIA_PATH}:/opt/netbox/netbox/media:rw
+      - ${NETBOX_REPORTS_PATH}:/opt/netbox/netbox/reports:rw
+      - ${NETBOX_SCRIPTS_PATH}:/opt/netbox/netbox/scripts:rw
+
+  postgres:
+    volumes:
+      - ${POSTGRES_DATA_PATH}:/var/lib/postgresql/data
+
+  redis:
+    volumes:
+      - ${REDIS_CACHE_PATH}:/data
+      - ${REDIS_DATA_PATH}:/data
+
+volumes:
+  netbox-media-files:
+  netbox-postgres-data:
+  netbox-redis-cache-data:
+  netbox-redis-data:
+  netbox-reports-files:
+  netbox-scripts-files:
